@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  backend:
+    image: monirzaman/spring-boot-docker
+    container_name: spring-boot-docker
+    build:
+      context: ./spring-boot-docker
+    ports:
+      - '9090:8080'
+    depends_on:
+      - database
+    networks:
+      - test-network
+
+  frontend:
+    image: monirzaman/angular-docker
+    container_name: angular-docker
+    build:
+      context: ./docker-angular-with-backend
+    ports:
+      - '8001:80'
+    depends_on:
+      - backend
+    networks:
+      - test-network
+
+  database:
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=students
+    ports:
+      - '5433:5432'
+    volumes:
+      - ./db-data:/var/lib/postgres
+    networks:
+      - test-network
+
+volumes:
+  db-data:
+
+networks:
+  test-network:
+#    driver: bridge
