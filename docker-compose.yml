@@ -26,7 +26,7 @@ services:
       - test-network
 
   database:
-    image: postgres:latest
+    image: postgres:16.1-alpine
     restart: unless-stopped
     environment:
       - POSTGRES_USER=postgres
@@ -42,6 +42,16 @@ services:
 volumes:
   db-data:
 
+#networks:
+#  test-network:
+#    driver: bridge
+
 networks:
   test-network:
-#    driver: bridge
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
+#          ip_range: 172.28.1.0/24 // not needed now
+          gateway: 172.28.1.1
